@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OUI-NON - Quiz</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; padding: 0; }
@@ -15,94 +15,77 @@
       color: #1a1a1a;
       overflow-x: hidden;
       min-height: 100vh;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
 
-    .container {
-      width: 100%;
-      max-width: 800px;
+    .card {
       background: white;
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      min-height: 500px;
-    }
-
-    /* HEADER */
-    .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 30px;
-      text-align: center;
-    }
-
-    .header h1 {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      font-size: 36px;
-      font-weight: 800;
-      letter-spacing: 2px;
-    }
-
-    .header p {
-      margin: 8px 0 0 0;
-      font-size: 13px;
-      opacity: 0.9;
-      letter-spacing: 1px;
-    }
-
-    /* CONTENT */
-    .content {
-      flex: 1;
       padding: 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 700px;
+      width: 100%;
+      animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* WAITING ROOM */
     .waiting-room {
       text-align: center;
-      width: 100%;
     }
 
     .waiting-room h2 {
       font-family: 'Poppins', sans-serif;
-      font-size: 24px;
-      color: #1a1a1a;
+      font-size: 28px;
+      font-weight: 800;
+      color: #667eea;
       margin: 0 0 30px 0;
     }
 
-    .players-list {
-      background: #f8f9fa;
-      border-radius: 12px;
-      padding: 20px;
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 16px;
       margin-bottom: 30px;
     }
 
-    .player-item {
-      padding: 12px;
-      margin: 8px 0;
-      background: white;
-      border-radius: 8px;
-      border-left: 4px solid #667eea;
-      text-align: left;
+    .player-badge {
+      padding: 16px;
+      background: #f0f3ff;
+      border-radius: 12px;
+      border: 2px solid #667eea;
+      animation: slideIn 0.3s ease;
     }
 
-    .player-item.creator {
-      border-left-color: #764ba2;
+    .player-name {
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 4px;
+    }
+
+    .player-role {
+      font-size: 11px;
+      color: #999;
     }
 
     .start-btn {
       font-family: 'Poppins', sans-serif;
       padding: 14px 40px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
@@ -117,7 +100,7 @@
 
     .start-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
     }
 
     .start-btn.show {
@@ -127,21 +110,64 @@
     /* QUIZ SCREEN */
     .quiz-screen {
       display: none;
-      width: 100%;
     }
 
     .quiz-screen.active {
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
+      display: block;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.4s ease;
     }
 
     .question-counter {
       font-size: 12px;
       color: #667eea;
-      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 1px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .difficulty-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .difficulty-badge.facile {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .difficulty-badge.moyen {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .difficulty-badge.difficile {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .difficulty-badge.elite {
+      background: #d1ecf1;
+      color: #0c5460;
     }
 
     .question-text {
@@ -149,15 +175,14 @@
       font-size: 24px;
       font-weight: 700;
       color: #1a1a1a;
-      margin: 0;
+      margin: 20px 0 30px 0;
       line-height: 1.4;
     }
 
     .answers-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 12px;
-      width: 100%;
     }
 
     .answer-btn {
@@ -170,9 +195,10 @@
       font-weight: 600;
       transition: all 0.3s ease;
       text-align: center;
+      line-height: 1.3;
     }
 
-    .answer-btn:hover {
+    .answer-btn:hover:not(:disabled) {
       border-color: #667eea;
       background: #f0f3ff;
       transform: translateY(-2px);
@@ -189,61 +215,76 @@
       opacity: 0.7;
     }
 
-    /* RESULTS */
+    /* RESULTS SCREEN */
     .results-screen {
       display: none;
-      width: 100%;
-    }
-
-    .results-screen.active {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .results-title {
-      font-family: 'Poppins', sans-serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: #667eea;
       text-align: center;
     }
 
-    .result-item {
-      padding: 14px;
-      background: #f8f9fa;
-      border-radius: 8px;
+    .results-screen.active {
+      display: block;
+    }
+
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      margin: 20px auto;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      font-size: 48px;
+      font-weight: 900;
+    }
+
+    .score-text {
+      font-family: 'Poppins', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin: 20px 0;
+    }
+
+    .score-message {
+      font-size: 16px;
+      color: #667eea;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    .score-details {
+      background: #f0f3ff;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 30px 0;
+      text-align: left;
+    }
+
+    .detail-line {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      border-left: 4px solid #e0e0e0;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(102, 126, 234, 0.2);
     }
 
-    .result-item.correct {
-      border-left-color: #10b981;
-      background: #f0fdf4;
+    .detail-line:last-child {
+      border-bottom: none;
     }
 
-    .result-item.incorrect {
-      border-left-color: #ef4444;
-      background: #fef2f2;
-    }
-
-    .result-name {
+    .detail-label {
       font-weight: 600;
       color: #1a1a1a;
     }
 
-    .result-answer {
-      font-size: 12px;
-      padding: 4px 8px;
-      background: white;
-      border-radius: 4px;
+    .detail-value {
+      font-weight: 700;
       color: #667eea;
-      font-weight: 600;
     }
 
-    .next-btn {
+    .home-btn {
       font-family: 'Poppins', sans-serif;
       padding: 12px 30px;
       font-size: 14px;
@@ -253,41 +294,36 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 10px;
       transition: all 0.3s ease;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      align-self: center;
+      letter-spacing: 1px;
     }
 
-    .next-btn:hover {
+    .home-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
     }
 
-    /* FOOTER */
-    .footer {
-      background: #f8f9fa;
-      padding: 16px;
+    .next-auto {
       text-align: center;
-      font-size: 12px;
       color: #999;
-      border-top: 1px solid #e0e0e0;
+      font-size: 12px;
+      margin-top: 20px;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0.5; }
     }
 
     @media (max-width: 600px) {
-      .header h1 {
-        font-size: 28px;
+      .card {
+        padding: 24px;
       }
-      
       .question-text {
         font-size: 18px;
       }
-      
-      .content {
-        padding: 24px;
-      }
-
       .answers-grid {
         grid-template-columns: 1fr;
       }
@@ -296,61 +332,91 @@
 </head>
 <body>
   <div class="container">
-    <!-- HEADER -->
-    <div class="header">
-      <div>
-        <h1>OUI-NON</h1>
-        <p>by ANGE</p>
-      </div>
-    </div>
-
-    <!-- CONTENT -->
-    <div class="content">
+    <div class="card">
       <!-- WAITING ROOM -->
       <div class="waiting-room" id="waitingRoom">
-        <h2>⏳ En attente des joueurs...</h2>
-        <div class="players-list" id="playersList"></div>
-        <button class="start-btn" id="startBtn" onclick="startQuiz()">Démarrer le quiz 🚀</button>
+        <h2>⏳ En attente...</h2>
+        <div class="players-grid" id="playersList"></div>
+        <button class="start-btn" id="startBtn" onclick="startQuiz()">Démarrer 🚀</button>
       </div>
 
       <!-- QUIZ SCREEN -->
       <div class="quiz-screen" id="quizScreen">
-        <div class="question-counter" id="questionNumber">Question 1 / 5</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="question-counter">
+          <span id="questionNum">Q1</span>
+          <span class="difficulty-badge" id="difficultyBadge">facile</span>
+        </div>
         <h2 class="question-text" id="questionText">Question...</h2>
         <div class="answers-grid" id="answersContainer"></div>
+        <div class="next-auto" id="nextAuto" style="display:none;">⏳ Question suivante dans 3s...</div>
       </div>
 
       <!-- RESULTS SCREEN -->
       <div class="results-screen" id="resultsScreen">
-        <div class="results-title">✓ Résultats</div>
-        <div class="results-list" id="resultsList"></div>
-        <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+        <h2 style="font-family: 'Poppins', sans-serif; color: #667eea; margin: 0 0 20px 0;">🎉 Quiz terminé !</h2>
+        <div class="score-circle" id="scoreCircle">0%</div>
+        <div class="score-text" id="scoreText">Excellent !</div>
+        <div class="score-message" id="scoreMessage">Tu as bien étudié !</div>
+        
+        <div class="score-details">
+          <div class="detail-line">
+            <span class="detail-label">Bonnes réponses</span>
+            <span class="detail-value"><span id="correctCount">0</span>/<span id="totalCount">10</span></span>
+          </div>
+          <div class="detail-line">
+            <span class="detail-label">Mauvaises réponses</span>
+            <span class="detail-value" id="wrongCount">0</span>
+          </div>
+          <div class="detail-line">
+            <span class="detail-label">Taux de réussite</span>
+            <span class="detail-value"><span id="percentage">0</span>%</span>
+          </div>
+        </div>
+
+        <button class="home-btn" onclick="window.location.href='index.html'">Retour à l'accueil</button>
       </div>
     </div>
-
-    <!-- FOOTER -->
-    <div class="footer">by ANGE • Quiz OUI-NON v1.0</div>
   </div>
 
   <script>
+    // Questions avec niveaux de difficulté
+    const questions = [
+      { text: 'La Terre est plate', correct: 'Non', options: ['Oui', 'Non'], level: 'facile' },
+      { text: 'Quel est le plus grand océan ?', correct: 'Océan Pacifique', options: ['Océan Atlantique', 'Océan Pacifique', 'Océan Indien', 'Océan Arctique'], level: 'moyen' },
+      { text: 'Les poissons ont des oreilles', correct: 'Oui', options: ['Oui', 'Non'], level: 'moyen' },
+      { text: 'En quelle année l\'homme est-il allé sur la Lune ?', correct: '1969', options: ['1965', '1969', '1972', '1974'], level: 'moyen' },
+      { text: 'Le miel ne pourrit jamais', correct: 'Oui', options: ['Oui', 'Non'], level: 'facile' },
+      { text: 'Quel est le plus haut sommet du monde ?', correct: 'Everest', options: ['Kilimandjaro', 'Everest', 'Denali', 'Elbrous'], level: 'moyen' },
+      { text: 'Les araignées sont des insectes', correct: 'Non', options: ['Oui', 'Non'], level: 'moyen' },
+      { text: 'La Grande Muraille de Chine est visible de l\'espace', correct: 'Non', options: ['Oui', 'Non'], level: 'moyen' },
+      { text: 'Quel compositeur a écrit La Neuvième Symphonie ?', correct: 'Beethoven', options: ['Mozart', 'Beethoven', 'Bach', 'Vivaldi'], level: 'difficile' },
+      { text: 'En quelle année la Révolution française a-t-elle débuté ?', correct: '1789', options: ['1776', '1789', '1799', '1812'], level: 'difficile' },
+      { text: 'Quel est l\'élément chimique le plus abondant dans l\'univers ?', correct: 'Hydrogène', options: ['Hélium', 'Hydrogène', 'Oxygène', 'Carbone'], level: 'difficile' },
+      { text: 'Qui a peint La Nuit étoilée ?', correct: 'Van Gogh', options: ['Picasso', 'Van Gogh', 'Monet', 'Matisse'], level: 'moyen' },
+      { text: 'Quel est le plus petit pays du monde ?', correct: 'Vatican', options: ['Monaco', 'Vatican', 'Andorre', 'Liechtenstein'], level: 'moyen' },
+      { text: 'Combien de cordes a une guitare classique ?', correct: '6', options: ['5', '6', '7', '8'], level: 'facile' },
+      { text: 'En quelle année le Titanic a-t-il coulé ?', correct: '1912', options: ['1898', '1912', '1925', '1935'], level: 'moyen' },
+      { text: 'Qui a écrit Roméo et Juliette ?', correct: 'Shakespeare', options: ['Marlowe', 'Shakespeare', 'Molière', 'Racine'], level: 'moyen' },
+      { text: 'Le cerveau humain contient environ combien de neurones ?', correct: '100 milliards', options: ['10 millions', '1 milliard', '100 milliards', '1 trillion'], level: 'difficile' },
+      { text: 'Quel est le plus long fleuve d\'Afrique ?', correct: 'Le Nil', options: ['Le Congo', 'Le Nil', 'Le Niger', 'L\'Amazone'], level: 'moyen' },
+      { text: 'En quelle année l\'homme a-t-il marché sur la Lune pour la première fois ?', correct: '1969', options: ['1965', '1969', '1972', '1975'], level: 'moyen' },
+      { text: 'Quel scientifique a découvert la radioactivité ?', correct: 'Marie Curie', options: ['Albert Einstein', 'Marie Curie', 'Rutherford', 'Planck'], level: 'difficile' },
+      { text: 'Quel était le plus grand empire romain s\'est étendu ?', correct: '117 ans', options: ['50 ans', '100 ans', '117 ans', '150 ans'], level: 'elite' },
+      { text: 'Quelle est la capitale de la Nouvelle-Zélande ?', correct: 'Wellington', options: ['Auckland', 'Christchurch', 'Wellington', 'Dunedin'], level: 'difficile' },
+      { text: 'Combien de pays y a-t-il au monde ?', correct: '195', options: ['185', '192', '195', '200'], level: 'moyen' },
+      { text: 'Quel gaz constitue environ 78% de notre atmosphère ?', correct: 'Azote', options: ['Oxygène', 'Azote', 'Dioxyde de carbone', 'Argon'], level: 'moyen' },
+      { text: 'Qui a inventé l\'ampoule électrique ?', correct: 'Edison', options: ['Tesla', 'Edison', 'Volta', 'Faraday'], level: 'moyen' }
+    ];
+
     let currentSession = null;
     let currentPlayer = null;
     let currentQuestionIndex = 0;
     let currentQuestions = [];
-    let isAnswered = false;
-
-    const questions = [
-      { text: 'La Terre est plate', correct: 'Non', options: ['Oui', 'Non'] },
-      { text: 'Quel est le plus grand océan ?', correct: 'Océan Pacifique', options: ['Atlantique', 'Pacifique', 'Indien', 'Arctique'] },
-      { text: 'Les poissons ont des oreilles', correct: 'Oui', options: ['Oui', 'Non'] },
-      { text: 'En quelle année sur la Lune ?', correct: '1969', options: ['1965', '1969', '1972', '1974'] },
-      { text: 'Le miel ne pourrit jamais', correct: 'Oui', options: ['Oui', 'Non'] },
-      { text: 'Le plus haut sommet du monde ?', correct: 'Everest', options: ['Kilimandjaro', 'Everest', 'Denali', 'Elbrous'] },
-      { text: 'Les araignées sont des insectes', correct: 'Non', options: ['Oui', 'Non'] },
-      { text: 'Combien de continents y a-t-il ?', correct: '7', options: ['5', '6', '7', '8'] },
-      { text: 'L\'or est le plus dense', correct: 'Non', options: ['Oui', 'Non'] },
-      { text: 'Le plus grand pays du monde ?', correct: 'Russie', options: ['Canada', 'Russie', 'USA', 'Australie'] }
-    ];
+    let correctAnswers = 0;
+    let answeredQuestions = 0;
 
     function init() {
       const params = new URLSearchParams(window.location.search);
@@ -386,15 +452,16 @@
 
       if (!currentSession) return;
 
-      const playersList = document.getElementById('playersList');
-      playersList.innerHTML = currentSession.players.map(player => 
-        `<div class="player-item ${player === currentSession.creator ? 'creator' : ''}">
-          👤 ${player} ${player === currentSession.creator ? '👑' : ''}
-        </div>`
-      ).join('');
+      const list = document.getElementById('playersList');
+      list.innerHTML = currentSession.players.map(p => `
+        <div class="player-badge">
+          <div class="player-name">${p}</div>
+          <div class="player-role">${p === currentSession.creator ? '👑' : '👤'}</div>
+        </div>
+      `).join('');
 
       if (currentSession.status === 'started' && currentQuestionIndex === 0) {
-        showQuiz();
+        startQuizView();
       }
     }
 
@@ -402,28 +469,33 @@
       let sessions = JSON.parse(localStorage.getItem('oui_non_sessions') || '[]');
       currentSession = sessions.find(s => s.code === currentSession.code);
       currentSession.status = 'started';
-      currentQuestions = questions.sort(() => Math.random() - 0.5).slice(0, 5);
+      
+      currentQuestions = questions.sort(() => Math.random() - 0.5).slice(0, 10);
       localStorage.setItem('oui_non_sessions', JSON.stringify(sessions));
-      showQuiz();
+      startQuizView();
     }
 
-    function showQuiz() {
+    function startQuizView() {
       document.getElementById('waitingRoom').style.display = 'none';
       currentQuestionIndex = 0;
-      isAnswered = false;
+      correctAnswers = 0;
+      answeredQuestions = 0;
       displayQuestion();
     }
 
     function displayQuestion() {
       if (currentQuestionIndex >= currentQuestions.length) {
-        document.getElementById('resultsScreen').classList.remove('active');
-        alert('🎉 Quiz terminé ! Bravo !');
-        window.location.href = 'index.html';
+        showResults();
         return;
       }
 
       const q = currentQuestions[currentQuestionIndex];
-      document.getElementById('questionNumber').textContent = `Question ${currentQuestionIndex + 1} / ${currentQuestions.length}`;
+      const progress = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+      
+      document.getElementById('progressFill').style.width = progress + '%';
+      document.getElementById('questionNum').textContent = `Q${currentQuestionIndex + 1}/${currentQuestions.length}`;
+      document.getElementById('difficultyBadge').textContent = q.level;
+      document.getElementById('difficultyBadge').className = `difficulty-badge ${q.level}`;
       document.getElementById('questionText').textContent = q.text;
 
       const container = document.getElementById('answersContainer');
@@ -431,44 +503,55 @@
         `<button class="answer-btn" onclick="selectAnswer('${opt}')">${opt}</button>`
       ).join('');
 
-      isAnswered = false;
       document.getElementById('quizScreen').classList.add('active');
       document.getElementById('resultsScreen').classList.remove('active');
+      document.getElementById('nextAuto').style.display = 'none';
     }
 
     function selectAnswer(answer) {
-      if (isAnswered) return;
-      isAnswered = true;
-
       const q = currentQuestions[currentQuestionIndex];
-      const correct = answer === q.correct;
+      
+      if (answer === q.correct) {
+        correctAnswers++;
+      }
+      answeredQuestions++;
 
-      const resultsList = document.getElementById('resultsList');
-      let allAnswers = [];
+      // Auto progression
+      document.getElementById('nextAuto').style.display = 'block';
+      document.querySelectorAll('.answer-btn').forEach(btn => btn.disabled = true);
+      
+      setTimeout(() => {
+        currentQuestionIndex++;
+        displayQuestion();
+      }, 2000);
+    }
 
-      let sessions = JSON.parse(localStorage.getItem('oui_non_sessions') || '[]');
-      let session = sessions.find(s => s.code === currentSession.code);
+    function showResults() {
+      const percentage = Math.round((correctAnswers / answeredQuestions) * 100);
+      const wrongCount = answeredQuestions - correctAnswers;
 
-      session.players.forEach((player, idx) => {
-        const isCorrect = Math.random() > 0.5;
-        const ans = isCorrect ? q.correct : q.options[Math.floor(Math.random() * q.options.length)];
-        allAnswers.push({ player, ans, correct: ans === q.correct });
-      });
+      let message = '';
+      if (percentage === 100) {
+        message = '🏆 Parfait ! Tu es un champion !';
+      } else if (percentage >= 80) {
+        message = '🌟 Excellent ! Très bonne performance !';
+      } else if (percentage >= 60) {
+        message = '👍 Bien ! Pas mal du tout !';
+      } else if (percentage >= 40) {
+        message = '📚 Assez bien. Continue tes révisions !';
+      } else {
+        message = '💪 À revoir. Révise et réessaye !';
+      }
 
-      resultsList.innerHTML = allAnswers.map(item => 
-        `<div class="result-item ${item.correct ? 'correct' : 'incorrect'}">
-          <span class="result-name">${item.player}</span>
-          <span class="result-answer">${item.correct ? '✓' : '✗'} ${item.ans}</span>
-        </div>`
-      ).join('');
+      document.getElementById('scoreCircle').textContent = percentage + '%';
+      document.getElementById('percentage').textContent = percentage;
+      document.getElementById('scoreMessage').textContent = message;
+      document.getElementById('correctCount').textContent = correctAnswers;
+      document.getElementById('totalCount').textContent = answeredQuestions;
+      document.getElementById('wrongCount').textContent = wrongCount;
 
       document.getElementById('quizScreen').classList.remove('active');
       document.getElementById('resultsScreen').classList.add('active');
-    }
-
-    function nextQuestion() {
-      currentQuestionIndex++;
-      displayQuestion();
     }
 
     window.addEventListener('load', init);
