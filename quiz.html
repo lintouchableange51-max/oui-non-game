@@ -517,6 +517,9 @@
 
     function startQuizView() {
       document.getElementById('waitingRoom').style.display = 'none';
+      if (currentQuestions.length === 0) {
+        currentQuestions = getRandomQuestions(5, 10);
+      }
       currentQuestionIndex = 0;
       playerAnswers = {};
       displayQuestion();
@@ -540,6 +543,11 @@
     }
 
     function displayQuestion() {
+      if (currentQuestionIndex >= currentQuestions.length) {
+        endQuiz();
+        return;
+      }
+
       const question = currentQuestions[currentQuestionIndex];
       document.getElementById('questionNumber').textContent = `Question ${currentQuestionIndex + 1} / ${currentQuestions.length}`;
       document.getElementById('questionText').textContent = question.text;
@@ -594,12 +602,7 @@
 
     function nextQuestion() {
       currentQuestionIndex++;
-
-      if (currentQuestionIndex < currentQuestions.length) {
-        displayQuestion();
-      } else {
-        endQuiz();
-      }
+      displayQuestion();
     }
 
     function endQuiz() {
