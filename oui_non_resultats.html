@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Résultats - Oui / Non</title>
+  <style>
+    *{ box-sizing: border-box; }
+    :root{--green:#2dd4bf;--red:#ff6b6b;--accent:#06b6d4;--bg1:#0a0e27;--bg2:#1e293b;--bg3:#0f172a}
+    html,body{ height:100%; margin:0; padding:0; }
+    body { 
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+      background: linear-gradient(135deg, var(--bg1) 0%, #1a1f3a 35%, var(--bg2) 70%, var(--bg3) 100%);
+      color:#f0f4f8; 
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container { 
+      max-width: 900px; 
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 32px;
+      letter-spacing: 2px;
+      font-weight: 800;
+      color: #fff;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: rgba(240,244,248,0.8);
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+    }
+
+    .stat-label {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      opacity: 0.9;
+    }
+
+    .stat-value {
+      font-size: 48px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .stat-oui .stat-label { color: var(--green); }
+    .stat-oui .stat-value { color: var(--green); }
+    .stat-oui { border-color: rgba(45,212,191,0.2); }
+
+    .stat-non .stat-label { color: var(--red); }
+    .stat-non .stat-value { color: var(--red); }
+    .stat-non { border-color: rgba(255,107,107,0.2); }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+
+    .progress-oui .progress-fill { background: var(--green); }
+    .progress-non .progress-fill { background: var(--red); }
+
+    .votes-list {
+      background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+    }
+
+    .votes-list h2 {
+      margin: 0 0 20px;
+      font-size: 18px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .vote-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 4px solid;
+      transition: all 0.3s ease;
+    }
+
+    .vote-item:hover {
+      background: rgba(255,255,255,0.04);
+      transform: translateX(4px);
+    }
+
+    .vote-item.oui {
+      border-left-color: var(--green);
+    }
+
+    .vote-item.non {
+      border-left-color: var(--red);
+    }
+
+    .vote-name {
+      font-weight: 700;
+      flex: 1;
+    }
+
+    .vote-choice {
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 1px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .vote-choice.oui {
+      color: var(--green);
+      background: rgba(45,212,191,0.1);
+    }
+
+    .vote-choice.non {
+      color: var(--red);
+      background: rgba(255,107,107,0.1);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      opacity: 0.7;
+    }
+
+    .refresh-btn {
+      background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(45,212,191,0.1));
+      border: 1px solid rgba(6,182,212,0.3);
+      color: var(--accent);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      transition: all 0.3s;
+      margin-top: 20px;
+    }
+
+    .refresh-btn:hover {
+      background: linear-gradient(135deg, rgba(6,182,212,0.3), rgba(45,212,191,0.2));
+      border-color: rgba(6,182,212,0.5);
+    }
+
+    .share-link {
+      background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 30px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+    }
+
+    .share-link h3 {
+      margin: 0 0 12px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(240,244,248,0.8);
+    }
+
+    .share-url {
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      padding: 10px;
+      word-break: break-all;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+      color: var(--accent);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .share-url:hover {
+      background: rgba(0,0,0,0.5);
+    }
+
+    .copy-btn {
+      margin-top: 8px;
+      background: rgba(6,182,212,0.2);
+      border: 1px solid rgba(6,182,212,0.3);
+      color: var(--accent);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(6,182,212,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>RÉSULTATS EN DIRECT</h1>
+      <p>L'INTOUCHABLE ANGE • créé juste pour le fun.</p>
+    </div>
+
+    <div class="share-link">
+      <h3>🔗 Lien à partager avec tes amis</h3>
+      <div class="share-url" id="shareUrl"></div>
+      <button class="copy-btn" onclick="copyLink()">Copier le lien</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card stat-oui">
+        <div class="stat-label">OUI</div>
+        <div class="stat-value" id="ouiCount">0</div>
+        <div class="progress-bar progress-oui">
+          <div class="progress-fill" id="ouiBar" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="stat-card stat-non">
+        <div class="stat-label">NON</div>
+        <div class="stat-value" id="nonCount">0</div>
+        <div class="progress-bar progress-non">
+          <div class="progress-fill" id="nonBar" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="votes-list">
+      <h2>📊 Votes Reçus</h2>
+      <div id="votesList"></div>
+      <button class="refresh-btn" onclick="loadVotes()">🔄 Rafraîchir</button>
+    </div>
+  </div>
+
+  <script>
+    // Get or generate session ID
+    function getSessionId() {
+      let sessionId = localStorage.getItem('oui_non_session_id');
+      if (!sessionId) {
+        sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('oui_non_session_id', sessionId);
+      }
+      return sessionId;
+    }
+
+    const sessionId = getSessionId();
+    const gameUrl = window.location.origin + window.location.pathname.replace('oui_non_resultats.html', 'oui_non_game.html') + '?session=' + sessionId;
+    
+    document.getElementById('shareUrl').textContent = gameUrl;
+
+    function loadVotes() {
+      const votes = JSON.parse(localStorage.getItem('oui_non_votes') || '[]');
+      
+      const ouiVotes = votes.filter(v => v.choice === 'OUI');
+      const nonVotes = votes.filter(v => v.choice === 'NON');
+      const total = votes.length;
+
+      // Update counts
+      document.getElementById('ouiCount').textContent = ouiVotes.length;
+      document.getElementById('nonCount').textContent = nonVotes.length;
+
+      // Update progress bars
+      const ouiPercent = total > 0 ? (ouiVotes.length / total) * 100 : 0;
+      const nonPercent = total > 0 ? (nonVotes.length / total) * 100 : 0;
+
+      document.getElementById('ouiBar').style.width = ouiPercent + '%';
+      document.getElementById('nonBar').style.width = nonPercent + '%';
+
+      // Update votes list
+      const votesList = document.getElementById('votesList');
+      if (votes.length === 0) {
+        votesList.innerHTML = '<div class="empty-state">👻 En attente de votes... Partage le lien avec tes amis !</div>';
+      } else {
+        votesList.innerHTML = votes.map(vote => `
+          <div class="vote-item ${vote.choice.toLowerCase()}">
+            <div class="vote-name">👤 ${vote.user}</div>
+            <div class="vote-choice ${vote.choice.toLowerCase()}">${vote.choice}</div>
+          </div>
+        `).reverse().join('');
+      }
+    }
+
+    function copyLink() {
+      const url = document.getElementById('shareUrl').textContent;
+      navigator.clipboard.writeText(url).then(() => {
+        alert('✓ Lien copié dans le presse-papiers !');
+      }).catch(() => {
+        alert('❌ Erreur lors de la copie. Copie manuellement le lien ci-dessus.');
+      });
+    }
+
+    // Load votes on page load
+    loadVotes();
+
+    // Auto-refresh every 2 seconds
+    setInterval(loadVotes, 2000);
+
+    // Listen for storage changes (other tabs)
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'oui_non_votes') {
+        loadVotes();
+      }
+    });
+  </script>
+</body>
+</html>

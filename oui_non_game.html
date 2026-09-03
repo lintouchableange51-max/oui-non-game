@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oui / Non - Défi</title>
+  <style>
+    *{ box-sizing: border-box; }
+    :root{--green:#2dd4bf;--red:#ff6b6b;--accent:#06b6d4;--card:rgba(255,255,255,0.04);--bg1:#0a0e27;--bg2:#1e293b;--bg3:#0f172a}
+    html,body{ height:100%; margin:0; padding:0; }
+    body { 
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+      display:flex; align-items:center; justify-content:center; 
+      min-height:100vh; 
+      background: linear-gradient(135deg, var(--bg1) 0%, #1a1f3a 35%, var(--bg2) 70%, var(--bg3) 100%);
+      color:#f0f4f8; 
+      overflow: hidden;
+      position: relative;
+    }
+
+    body::before{ 
+      content:""; position:fixed; z-index:0; 
+      width:150vw; height:150vh; 
+      background: radial-gradient(circle at 20% 50%, rgba(6,182,212,0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(45,212,191,0.12) 0%, transparent 50%);
+      animation: driftBG 20s ease-in-out infinite;
+    }
+    body::after{ 
+      content:""; position:fixed; z-index:1; top:0; left:0; right:0; bottom:0;
+      background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g opacity="0.03"><circle cx="30" cy="30" r="2" fill="white"/></g></svg>');
+    }
+    @keyframes driftBG{ 0%{transform:translate(0,0) scale(1);} 50%{transform:translate(30px,-20px) scale(1.05);} 100%{transform:translate(0,0) scale(1);} }
+
+    /* LOGIN SCREEN */
+    .login-screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 15;
+      transition: all 0.5s ease;
+    }
+
+    .login-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .login-card {
+      position: relative;
+      z-index: 16;
+      background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+      padding: 50px 44px;
+      border-radius: 28px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+      text-align: center;
+      width: 100%;
+      max-width: 420px;
+      backdrop-filter: blur(12px) saturate(150%);
+      border: 1px solid rgba(255,255,255,0.08);
+      animation: slideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .login-card h1 {
+      margin: 0 0 8px;
+      font-size: 36px;
+      letter-spacing: 3px;
+      font-weight: 800;
+      color: #fff;
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #fff, rgba(255,255,255,0.8));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .login-subtitle {
+      color: rgba(240,244,248,0.8);
+      font-size: 14px;
+      margin: 0 0 28px;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .username-input {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 16px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      color: #fff;
+      backdrop-filter: blur(8px);
+      transition: all 0.3s ease;
+      outline: none;
+      letter-spacing: 0.5px;
+    }
+
+    .username-input::placeholder {
+      color: rgba(240,244,248,0.5);
+    }
+
+    .username-input:focus {
+      border-color: rgba(6,182,212,0.5);
+      box-shadow: 0 0 0 3px rgba(6,182,212,0.1), inset 0 0 20px rgba(6,182,212,0.05);
+      background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(45,212,191,0.04));
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      border: 1px solid rgba(6,182,212,0.3);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(45,212,191,0.1));
+      color: var(--accent);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+      text-transform: uppercase;
+    }
+
+    .login-btn:hover {
+      background: linear-gradient(135deg, rgba(6,182,212,0.3), rgba(45,212,191,0.2));
+      border-color: rgba(6,182,212,0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(6,182,212,0.2);
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+    }
+
+    /* GAME SCREEN */
+    .game-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      transition: all 0.5s ease;
+    }
+
+    .game-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .card { 
+      position: relative; 
+      z-index: 10; 
+      background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+      padding: 40px 36px; 
+      border-radius: 24px; 
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+      text-align: center; 
+      width: 100%; max-width: 480px;
+      backdrop-filter: blur(12px) saturate(150%);
+      -webkit-backdrop-filter: blur(12px) saturate(150%);
+      border: 1px solid rgba(255,255,255,0.08);
+      animation: slideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    h1{ 
+      margin: 0 0 12px; 
+      font-size: 36px; 
+      letter-spacing: 3px; 
+      font-weight: 800; 
+      color: #fff; 
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #fff, rgba(255,255,255,0.8));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    } 
+    h2{ 
+      margin: 8px 0 8px; 
+      font-size: 18px; 
+      color: rgba(240,244,248,0.95); 
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .username-display{
+      font-size: 12px;
+      color: rgba(206,230,255,0.7);
+      margin-bottom: 16px;
+      font-weight: 600;
+      padding: 8px 12px;
+      background: rgba(6,182,212,0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(6,182,212,0.2);
+      display: inline-block;
+    }
+
+    .buttons { 
+      display: flex; 
+      gap: 16px; 
+      justify-content: center; 
+      margin: 24px 0;
+    }
+
+    .btn { 
+      padding: 14px 32px; 
+      font-size: 18px; 
+      font-weight: 700;
+      letter-spacing: 1px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px; 
+      cursor: pointer; 
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      color: inherit; 
+      position: relative; 
+      z-index: 5;
+      overflow: hidden;
+    }
+
+    .btn:hover{ 
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .btn:active{ 
+      transform: translateY(-4px) scale(0.98);
+    }
+
+    #oui { 
+      color: var(--green); 
+      text-shadow: 0 0 20px rgba(45,212,191,0.3);
+    }
+
+    #non { 
+      color: var(--red);
+      text-shadow: 0 0 20px rgba(255,107,107,0.3);
+    }
+
+    .btn[disabled] { 
+      opacity: 0.5; 
+      cursor: not-allowed;
+    }
+
+    @keyframes poseBlurPro {
+      0% { 
+        transform: translateY(0) scale(1) rotate(0deg);
+        filter: blur(0);
+        opacity: 1;
+      }
+      30% { 
+        transform: translateY(-20px) scale(1.15);
+      }
+      100% { 
+        transform: translateY(-50px) scale(1.25);
+        filter: blur(8px);
+        opacity: 0;
+      }
+    }
+    .btn.clicked { animation: poseBlurPro 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+    #message { 
+      margin-top: 20px; 
+      font-weight: 800; 
+      color: var(--green); 
+      opacity: 0; 
+      transform: translateY(12px) scale(0.95);
+      transition: opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      text-shadow: 0 0 30px rgba(45,212,191,0.3);
+      letter-spacing: 1px;
+      font-size: 16px;
+    }
+    #message.show { 
+      opacity: 1; 
+      transform: translateY(0) scale(1);
+    }
+
+    .celebration-container { 
+      position: fixed; top: 0; left: 0; right: 0; height: 100vh; 
+      pointer-events: none; z-index: 8; overflow: hidden; 
+    }
+
+    .celebration-item { 
+      position: absolute; 
+      font-size: 32px; 
+      opacity: 0;
+      animation: fallDownPro 2.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    }
+
+    @keyframes fallDownPro {
+      0% { 
+        transform: translateY(-80px) translateX(0) scale(0.9) rotate(0deg);
+        opacity: 1;
+      }
+      50% {
+        opacity: 1;
+        transform: translateY(40vh) translateX(var(--drift, 0px)) scale(1.1) rotate(180deg);
+      }
+      100% { 
+        transform: translateY(120vh) translateX(var(--drift, 0px)) scale(0.6) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    footer {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 24px;
+      z-index: 6;
+    }
+
+    .footer-glass {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 14px;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.98);
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px) saturate(150%);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+
+    .footer-caption {
+      display: block;
+      margin-top: 8px;
+      text-align: center;
+      font-size: 11px;
+      color: rgba(206,230,255,0.8);
+      font-weight: 600;
+      opacity: 0.85;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="celebration-container" id="celebrationContainer"></div>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <h1>BIENVENU</h1>
+      <p class="login-subtitle">Entre ton nom pour commencer le défi</p>
+      
+      <div class="form-group">
+        <input 
+          type="text" 
+          id="usernameInput" 
+          class="username-input" 
+          placeholder="Ton nom..." 
+          maxlength="30"
+          autofocus
+          onkeypress="if(event.key === 'Enter') startGame()"
+        />
+      </div>
+
+      <button class="login-btn" onclick="startGame()">COMMENCER 🚀</button>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="gameScreen" class="game-screen hidden">
+    <div class="card">
+      <h1>BIENVENU</h1>
+      <h2>TU ACCEPTE ?</h2>
+      <div class="username-display" id="userDisplay"></div>
+      <div class="buttons">
+        <button id="oui" class="btn" aria-pressed="false">OUI</button>
+        <button id="non" class="btn">NON</button>
+      </div>
+      <div id="message" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-glass">L'INTOUCHABLE ANGE</div>
+    <div class="footer-caption">créé juste pour le fun.</div>
+  </footer>
+
+  <script>
+    let currentUser = '';
+
+    function startGame() {
+      const username = document.getElementById('usernameInput').value.trim();
+      
+      if (!username) {
+        alert('📛 Entre ton nom pour continuer !');
+        return;
+      }
+
+      currentUser = username;
+      
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.remove('hidden');
+      
+      initGame();
+    }
+
+    function initGame() {
+      const userDisplay = document.getElementById('userDisplay');
+      userDisplay.textContent = `👤 ${currentUser}`;
+    }
+
+    const ANIM_MS = 900;
+    const celebrationContainer = document.getElementById('celebrationContainer');
+    const msg = document.getElementById('message');
+
+    function triggerCelebration(){
+      const emoji = ['🎉', '✨', '🌟', '💫', '🎊', '🎈', '💚', '❤️', '🟢', '🔴', '💚', '❤️', '🌹', '🍎', '🍏', '⭐', '🎇', '✨'];
+      for(let i = 0; i < 28; i++){
+        const item = document.createElement('div');
+        item.className = 'celebration-item';
+        item.textContent = emoji[Math.floor(Math.random() * emoji.length)];
+        
+        const leftPos = Math.random() * 100;
+        item.style.left = leftPos + '%';
+        
+        const drift = (Math.random() - 0.5) * 100;
+        item.style.setProperty('--drift', drift + 'px');
+        
+        item.style.animationDelay = (i * 0.05) + 'ms';
+        
+        celebrationContainer.appendChild(item);
+        setTimeout(() => item.remove(), 2600);
+      }
+    }
+
+    function showCongrats(choice) {
+      const ouiBtn = document.getElementById('oui');
+      const nonBtn = document.getElementById('non');
+      
+      ouiBtn.textContent = 'OUI';
+      nonBtn.textContent = 'OUI';
+      ouiBtn.disabled = true;
+      nonBtn.disabled = true;
+      ouiBtn.setAttribute('aria-pressed', 'true');
+      msg.innerHTML = "FÉLICITATIONS D'AVOIR ACCEPTÉ<br><span style='font-size:12px; opacity:0.8; margin-top:8px; display:block;'>✓ Vote enregistré</span>";
+      msg.classList.add('show');
+      triggerCelebration();
+      
+      saveVote(choice);
+    }
+
+    function saveVote(choice) {
+      const vote = {
+        user: currentUser,
+        choice: choice,
+        timestamp: new Date().toISOString()
+      };
+
+      let votes = JSON.parse(localStorage.getItem('oui_non_votes') || '[]');
+      votes.push(vote);
+      localStorage.setItem('oui_non_votes', JSON.stringify(votes));
+
+      console.log('✓ Vote recorded:', vote);
+    }
+
+    function handleOuiClick() {
+      const ouiBtn = document.getElementById('oui');
+      ouiBtn.classList.add('clicked');
+      setTimeout(() => {
+        showCongrats('OUI');
+      }, ANIM_MS);
+    }
+
+    function handleNonClick() {
+      const nonBtn = document.getElementById('non');
+      nonBtn.classList.add('clicked');
+      setTimeout(() => {
+        nonBtn.classList.remove('clicked');
+        nonBtn.textContent = 'OUI';
+        nonBtn.animate([
+          { transform: 'translateY(0) scale(1)' },
+          { transform: 'translateY(-4px) scale(1.03)' },
+          { transform: 'translateY(0) scale(1)' }
+        ], { duration: 220, easing: 'ease-out' });
+
+        setTimeout(() => {
+          showCongrats('NON');
+        }, 220);
+      }, ANIM_MS);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const ouiBtn = document.getElementById('oui');
+      const nonBtn = document.getElementById('non');
+
+      ouiBtn.addEventListener('click', () => {
+        if (ouiBtn.disabled) return;
+        handleOuiClick();
+      });
+
+      nonBtn.addEventListener('click', () => {
+        if (nonBtn.disabled) return;
+        handleNonClick();
+      });
+    });
+  </script>
+</body>
+</html>
